@@ -5,16 +5,24 @@ const latitudeElement = document.getElementById('latitude');
 const longitudeElement = document.getElementById('longitude');
 const errorMessage = document.getElementById('error-message');
 const getLocationButton = document.getElementById('get-location-btn');
+const googleMapIframe = document.getElementById('google-map');
 
-// Función para obtener la ubicación
+// Obtener la ubicación y mostrarla en Google Maps
 getLocationButton.addEventListener('click', () => {
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 const { latitude, longitude } = position.coords;
+
+                // Actualizar las coordenadas en la interfaz
                 latitudeElement.textContent = `Latitud: ${latitude}`;
                 longitudeElement.textContent = `Longitud: ${longitude}`;
-                errorMessage.textContent = ''; // Limpia errores
+
+                // Actualizar el mapa de Google Maps con las coordenadas
+                const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}&output=embed`;
+                googleMapIframe.src = googleMapsUrl;
+
+                errorMessage.textContent = ''; // Limpiar errores
             },
             (error) => {
                 switch (error.code) {
@@ -33,6 +41,6 @@ getLocationButton.addEventListener('click', () => {
             }
         );
     } else {
-        errorMessage.textContent = 'La Geolocalización no es compatible con este navegador.';
+        errorMessage.textContent = 'La geolocalización no es compatible con este navegador.';
     }
 });
