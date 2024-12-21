@@ -1,5 +1,13 @@
-const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/TU-URL/exec"; // Reemplaza TU-URL con la URL de tu Web App
-const currentUser = "eric"; // Usuario simulado para este ejemplo
+// URL de la API de Google Sheets
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycby-5hyAVP8ej-38MSKxibjot44sS0o-WCH-4lc2XSI5FnQVucdBJSXdlZcseQSBpp54jg/exec";
+
+// Lista de usuarios
+const usuarios = [
+    { username: "Eric", password: "eric@2024" },
+    { username: "Florencia", password: "florencia@2024" }
+];
+
+let currentUser = null; // Usuario actualmente autenticado
 
 const latitudeElement = document.getElementById("latitude");
 const longitudeElement = document.getElementById("longitude");
@@ -7,6 +15,25 @@ const googleMapIframe = document.getElementById("google-map");
 const locationHistoryElement = document.getElementById("location-history");
 const errorMessage = document.getElementById("error-message");
 const updateLocationButton = document.getElementById("update-location");
+
+// Función para iniciar sesión
+function login(username, password) {
+    const usuarioValido = usuarios.find(
+        (user) =>
+            user.username.toLowerCase() === username.toLowerCase() &&
+            user.password === password
+    );
+
+    if (usuarioValido) {
+        currentUser = usuarioValido.username;
+        errorMessage.textContent = ""; // Limpia mensajes de error
+        alert(`Bienvenido, ${currentUser}`);
+        displayLocationHistory();
+    } else {
+        currentUser = null;
+        errorMessage.textContent = "Usuario o contraseña incorrectos.";
+    }
+}
 
 // Obtener la ubicación del dispositivo
 function getLocation() {
@@ -94,5 +121,5 @@ function displayLocationHistory() {
 // Asignar evento al botón de actualizar ubicación
 updateLocationButton.addEventListener("click", getLocation);
 
-// Cargar el historial al inicio
-displayLocationHistory();
+// Ejemplo de inicio de sesión automático para pruebas (comentado para producción)
+// login("Eric", "eric@2024");
