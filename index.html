@@ -3,21 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ubicación GPS en Google Maps</title>
+    <title>Login y Monitor GPS</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Monitor GPS con Google Maps</h1>
+    <!-- Contenedor de Login -->
+    <div class="container" id="login-container">
+        <h1>Iniciar Sesión</h1>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar Sesión</button>
+        </form>
+        <p id="error-message" style="color: red; margin-top: 10px;"></p>
+    </div>
 
-        <!-- Coordenadas GPS -->
+    <!-- Contenedor del Monitor GPS -->
+    <div class="container" id="gps-container" style="display: none;">
+        <h1>Monitor GPS con Google Maps</h1>
         <div class="card">
             <h2>Coordenadas</h2>
             <p id="latitude">Latitud: --</p>
             <p id="longitude">Longitud: --</p>
         </div>
-
-        <!-- Mapa de Google Maps -->
         <div class="map-container">
             <iframe
                 id="google-map"
@@ -29,10 +37,8 @@
                 referrerpolicy="no-referrer-when-downgrade">
             </iframe>
         </div>
-
-        <!-- Botón para obtener ubicación -->
         <button id="get-location-btn">Obtener Ubicación</button>
-        <p id="error-message" style="color: red; margin-top: 10px;"></p>
+        <button id="logout-btn">Cerrar Sesión</button>
     </div>
 
     <script src="script.js"></script>
