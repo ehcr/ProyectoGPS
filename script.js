@@ -1,4 +1,3 @@
-// URL de la API de Google Sheets
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycby-5hyAVP8ej-38MSKxibjot44sS0o-WCH-4lc2XSI5FnQVucdBJSXdlZcseQSBpp54jg/exec";
 
 // Lista de usuarios
@@ -15,6 +14,20 @@ const googleMapIframe = document.getElementById("google-map");
 const locationHistoryElement = document.getElementById("location-history");
 const errorMessage = document.getElementById("error-message");
 const updateLocationButton = document.getElementById("update-location");
+const loginForm = document.getElementById("login-form");
+const loginCard = document.getElementById("login-card");
+const mainContent = document.getElementById("main-content");
+const loginErrorMessage = document.getElementById("login-error-message");
+
+// Manejar el evento de envío del formulario de login
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault(); // Evita el envío por defecto del formulario
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    login(username, password);
+});
 
 // Función para iniciar sesión
 function login(username, password) {
@@ -26,12 +39,13 @@ function login(username, password) {
 
     if (usuarioValido) {
         currentUser = usuarioValido.username;
-        errorMessage.textContent = ""; // Limpia mensajes de error
-        alert(`Bienvenido, ${currentUser}`);
+        loginErrorMessage.textContent = ""; // Limpia mensajes de error
+        loginCard.style.display = "none"; // Oculta el formulario de login
+        mainContent.style.display = "block"; // Muestra el contenido principal
         displayLocationHistory();
     } else {
         currentUser = null;
-        errorMessage.textContent = "Usuario o contraseña incorrectos.";
+        loginErrorMessage.textContent = "Usuario o contraseña incorrectos.";
     }
 }
 
@@ -120,6 +134,3 @@ function displayLocationHistory() {
 
 // Asignar evento al botón de actualizar ubicación
 updateLocationButton.addEventListener("click", getLocation);
-
-// Ejemplo de inicio de sesión automático para pruebas (comentado para producción)
-// login("Eric", "eric@2024");

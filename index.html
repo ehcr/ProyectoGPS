@@ -9,23 +9,32 @@
 <body>
     <div class="gps-container">
         <h1>Seguimiento GPS</h1>
-        
-        <div class="card">
+
+        <!-- Formulario de Login -->
+        <div class="card" id="login-card">
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <label for="username">Usuario:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Ingresar</button>
+                <p id="login-error-message" class="error"></p>
+            </form>
+        </div>
+
+        <!-- Contenido Principal (oculto hasta que se inicie sesión) -->
+        <div class="card" id="main-content" style="display: none;">
             <h2>Información Actual</h2>
             <p id="latitude">Latitud:</p>
             <p id="longitude">Longitud:</p>
             <iframe id="google-map" src="" frameborder="0"></iframe>
             <p id="error-message" class="error"></p>
-        </div>
+            <button id="update-location">Actualizar Ubicación</button>
 
-        <!-- Histórico de ubicaciones -->
-        <div class="card">
             <h2>Historial de Ubicaciones</h2>
             <ul id="location-history"></ul>
         </div>
-
-        <!-- Botón para actualizar la ubicación -->
-        <button id="update-location">Actualizar Ubicación</button>
     </div>
 
     <script src="script.js"></script>
