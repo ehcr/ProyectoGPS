@@ -1,44 +1,31 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login y Monitor GPS</title>
+    <title>GPS Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Contenedor de Login -->
-    <div class="container" id="login-container">
-        <h1>Iniciar Sesión</h1>
-        <form id="login-form">
-            <input type="text" id="username" placeholder="Usuario" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <button type="submit">Iniciar Sesión</button>
-        </form>
-        <p id="error-message" style="color: red; margin-top: 10px;"></p>
-    </div>
-
-    <!-- Contenedor del Monitor GPS -->
-    <div class="container" id="gps-container" style="display: none;">
-        <h1>Monitor GPS con Google Maps</h1>
+    <div class="gps-container">
+        <h1>Seguimiento GPS</h1>
+        
         <div class="card">
-            <h2>Coordenadas</h2>
-            <p id="latitude">Latitud: --</p>
-            <p id="longitude">Longitud: --</p>
+            <h2>Información Actual</h2>
+            <p id="latitude">Latitud:</p>
+            <p id="longitude">Longitud:</p>
+            <iframe id="google-map" src="" frameborder="0"></iframe>
+            <p id="error-message" class="error"></p>
         </div>
-        <div class="map-container">
-            <iframe
-                id="google-map"
-                width="100%"
-                height="300px"
-                style="border:0;"
-                loading="lazy"
-                allowfullscreen
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
+
+        <!-- Histórico de ubicaciones -->
+        <div class="card">
+            <h2>Historial de Ubicaciones</h2>
+            <ul id="location-history"></ul>
         </div>
-        <button id="get-location-btn">Obtener Ubicación</button>
-        <button id="logout-btn">Cerrar Sesión</button>
+
+        <!-- Botón para actualizar la ubicación -->
+        <button id="update-location">Actualizar Ubicación</button>
     </div>
 
     <script src="script.js"></script>
