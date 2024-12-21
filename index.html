@@ -26,14 +26,13 @@
         <!-- Contenido Principal (oculto hasta que se inicie sesión) -->
         <div class="card" id="main-content" style="display: none;">
             <h2>Información Actual</h2>
-            <p id="latitude">Latitud:</p>
-            <p id="longitude">Longitud:</p>
-            <iframe id="google-map" src="" frameborder="0"></iframe>
+            <div class="location-info">
+                <p id="latitude">Latitud:</p>
+                <p id="longitude">Longitud:</p>
+                <iframe id="google-map" src="" frameborder="0"></iframe>
+            </div>
             <p id="error-message" class="error"></p>
-            <button id="update-location">Actualizar Ubicación</button>
-
-            <h2>Historial de Ubicaciones</h2>
-            <ul id="location-history"></ul>
+            <button id="update-location">Enviar Ubicación Actual</button>
         </div>
     </div>
 

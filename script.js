@@ -11,7 +11,6 @@ let currentUser = null; // Usuario actualmente autenticado
 const latitudeElement = document.getElementById("latitude");
 const longitudeElement = document.getElementById("longitude");
 const googleMapIframe = document.getElementById("google-map");
-const locationHistoryElement = document.getElementById("location-history");
 const errorMessage = document.getElementById("error-message");
 const updateLocationButton = document.getElementById("update-location");
 const loginForm = document.getElementById("login-form");
@@ -42,7 +41,6 @@ function login(username, password) {
         loginErrorMessage.textContent = ""; // Limpia mensajes de error
         loginCard.style.display = "none"; // Oculta el formulario de login
         mainContent.style.display = "block"; // Muestra el contenido principal
-        displayLocationHistory();
     } else {
         currentUser = null;
         loginErrorMessage.textContent = "Usuario o contraseña incorrectos.";
@@ -97,7 +95,7 @@ function saveLocationToGoogleSheets(latitude, longitude) {
     })
         .then((response) => {
             if (response.ok) {
-                displayLocationHistory();
+                console.log("Ubicación guardada con éxito.");
             } else {
                 errorMessage.textContent = "Error al guardar la ubicación.";
                 console.error("Error al guardar:", response.statusText);
@@ -106,29 +104,6 @@ function saveLocationToGoogleSheets(latitude, longitude) {
         .catch((error) => {
             errorMessage.textContent = "No se pudo conectar con Google Sheets.";
             console.error("Error:", error);
-        });
-}
-
-// Mostrar el historial de ubicaciones
-function displayLocationHistory() {
-    fetch(`${GOOGLE_SHEETS_URL}?usuario=${currentUser}`)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("No se pudo cargar el historial.");
-            }
-            return response.json();
-        })
-        .then((data) => {
-            locationHistoryElement.innerHTML = ""; // Limpiar historial
-            data.forEach((entry) => {
-                const listItem = document.createElement("li");
-                listItem.textContent = `${entry.timestamp}: Latitud ${entry.latitude}, Longitud ${entry.longitude}`;
-                locationHistoryElement.appendChild(listItem);
-            });
-        })
-        .catch((error) => {
-            errorMessage.textContent = "No se pudo cargar el historial.";
-            console.error("Error al cargar el histórico:", error);
         });
 }
 
