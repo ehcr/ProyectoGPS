@@ -1,111 +1,109 @@
-const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycby-5hyAVP8ej-38MSKxibjot44sS0o-WCH-4lc2XSI5FnQVucdBJSXdlZcseQSBpp54jg/exec";
+// Importar Firebase
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
 
-// Lista de usuarios
+// Configuración de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBldMuK15j1my1cnAX2-gbdQvhLOxp0k_U",
+    authDomain: "proyectogps-c31a8.firebaseapp.com",
+    databaseURL: "https://proyectogps-c31a8-default-rtdb.firebaseio.com",
+    projectId: "proyectogps-c31a8",
+    storageBucket: "proyectogps-c31a8.firebasestorage.app",
+    messagingSenderId: "545856747369",
+    appId: "1:545856747369:web:0000b2633467457066eff8",
+    measurementId: "G-S6P3XM6F77"
+  };
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+// Elementos del DOM
+const loginContainer = document.getElementById("login-container");
+const gpsContainer = document.getElementById("gps-container");
+const loginForm = document.getElementById("login-form");
+const errorMessage = document.getElementById("error-message");
+const saveMessage = document.getElementById("save-message");
+const getLocationButton = document.getElementById("get-location-btn");
+const logoutButton = document.getElementById("logout-btn");
+const latitudeElement = document.getElementById("latitude");
+const longitudeElement = document.getElementById("longitude");
+const googleMapIframe = document.getElementById("google-map");
+
+// Lista de usuarios permitidos
 const usuarios = [
-    { username: "Eric", password: "eric@2024" },
-    { username: "Florencia", password: "florencia@2024" }
+    { username: "eric", password: "eric@2024" },
+    { username: "florencia", password: "florencia@2024" }
 ];
 
 let currentUser = null; // Usuario actualmente autenticado
 
-const latitudeElement = document.getElementById("latitude");
-const longitudeElement = document.getElementById("longitude");
-const googleMapIframe = document.getElementById("google-map");
-const errorMessage = document.getElementById("error-message");
-const updateLocationButton = document.getElementById("update-location");
-const loginForm = document.getElementById("login-form");
-const loginCard = document.getElementById("login-card");
-const mainContent = document.getElementById("main-content");
-const loginErrorMessage = document.getElementById("login-error-message");
-
-// Manejar el evento de envío del formulario de login
+// Manejo del formulario de login
 loginForm.addEventListener("submit", (event) => {
-    event.preventDefault(); // Evita el envío por defecto del formulario
+    event.preventDefault();
 
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    login(username, password);
-});
-
-// Función para iniciar sesión
-function login(username, password) {
     const usuarioValido = usuarios.find(
-        (user) =>
-            user.username.toLowerCase() === username.toLowerCase() &&
-            user.password === password
+        (user) => user.username === username && user.password === password
     );
 
     if (usuarioValido) {
-        currentUser = usuarioValido.username;
-        loginErrorMessage.textContent = ""; // Limpia mensajes de error
-        loginCard.style.display = "none"; // Oculta el formulario de login
-        mainContent.style.display = "block"; // Muestra el contenido principal
+        currentUser = username;
+        alert(`Bienvenido, ${username}!`);
+        loginContainer.style.display = "none";
+        gpsContainer.style.display = "block";
     } else {
-        currentUser = null;
-        loginErrorMessage.textContent = "Usuario o contraseña incorrectos.";
+        errorMessage.textContent = "Usuario o contraseña incorrectos.";
     }
-}
+});
 
-// Obtener la ubicación del dispositivo
-function getLocation() {
-    navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const { latitude, longitude } = position.coords;
-            latitudeElement.textContent = `Latitud: ${latitude}`;
-            longitudeElement.textContent = `Longitud: ${longitude}`;
-            googleMapIframe.src = `https://www.google.com/maps?q=${latitude},${longitude}&output=embed`;
-            saveLocationToGoogleSheets(latitude, longitude);
-        },
-        (error) => {
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    errorMessage.textContent = "Permiso denegado para obtener la ubicación.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    errorMessage.textContent = "Ubicación no disponible.";
-                    break;
-                case error.TIMEOUT:
-                    errorMessage.textContent = "Tiempo de espera agotado.";
-                    break;
-                default:
-                    errorMessage.textContent = "Error desconocido al obtener la ubicación.";
+// Obtener ubicación
+getLocationButton.addEventListener("click", () => {
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+
+                latitudeElement.textContent = `Latitud: ${latitude}`;
+                longitudeElement.textContent = `Longitud: ${longitude}`;
+
+                const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}&output=embed`;
+                googleMapIframe.src = googleMapsUrl;
+
+                saveLocationToFirebase(latitude, longitude);
+            },
+            (error) => {
+                errorMessage.textContent = "No se pudo obtener la ubicación.";
             }
-        }
-    );
-}
-
-// Guardar la ubicación en Google Sheets
-function saveLocationToGoogleSheets(latitude, longitude) {
-    if (!currentUser) {
-        errorMessage.textContent = "Debes iniciar sesión para guardar la ubicación.";
-        return;
+        );
+    } else {
+        errorMessage.textContent = "La geolocalización no es compatible.";
     }
+});
 
-    fetch(GOOGLE_SHEETS_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            usuario: currentUser,
-            latitude,
-            longitude
-        })
+// Guardar ubicación en Firebase
+function saveLocationToFirebase(latitude, longitude) {
+    const refUbicaciones = ref(database, "ubicaciones");
+    push(refUbicaciones, {
+        usuario: currentUser,
+        latitude,
+        longitude,
+        timestamp: new Date().toISOString()
     })
-        .then((response) => {
-            if (response.ok) {
-                console.log("Ubicación guardada con éxito.");
-            } else {
-                errorMessage.textContent = "Error al guardar la ubicación.";
-                console.error("Error al guardar:", response.statusText);
-            }
+        .then(() => {
+            saveMessage.textContent = "Ubicación guardada correctamente.";
         })
         .catch((error) => {
-            errorMessage.textContent = "No se pudo conectar con Google Sheets.";
+            errorMessage.textContent = "Error al guardar en Firebase.";
             console.error("Error:", error);
         });
 }
 
-// Asignar evento al botón de actualizar ubicación
-updateLocationButton.addEventListener("click", getLocation);
+// Cerrar sesión
+logoutButton.addEventListener("click", () => {
+    gpsContainer.style.display = "none";
+    loginContainer.style.display = "block";
+    currentUser = null;
+});
