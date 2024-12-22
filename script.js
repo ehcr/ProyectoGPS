@@ -1,7 +1,3 @@
-// Importar Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js";
-
 // Configuración de Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyBldMuK15j1my1cnAX2-gbdQvhLOxp0k_U",
